@@ -16,9 +16,14 @@ type Server struct {
 
 // New - crete and init server
 func New(config *Config) (*Server, error) {
+	store, err := store.New(config.MongoDBConn)
+	if err != nil {
+		return nil, err
+	}
+
 	s := &Server{
 		router: mux.NewRouter(),
-		store:  store.New(),
+		store:  store,
 		config: config,
 	}
 
@@ -30,8 +35,10 @@ func New(config *Config) (*Server, error) {
 }
 
 func (s *Server) configureRouter() {
-	s.router.HandleFunc("/", s.infoHandler).Methods("GET", "POST")
-	s.router.HandleFunc("/save", s.handleCreate).Methods("POST")
+	// s.router.HandleFunc("/", s.infoHandler).Methods("GET", "POST")
+
+	s.router.HandleFunc("/create", s.handleCreate).Methods("POST")
+	s.router.HandleFunc("/{shorturl}", s.handleShortURL).Methods("GET")
 }
 
 // Start - start server
