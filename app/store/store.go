@@ -13,17 +13,19 @@ import (
 // Store struct
 type Store struct {
 	client *mongo.Client
+	config *Config
 }
 
 // New - return new store
-func New(connectionString string) (*Store, error) {
-	client, err := mongo.NewClient(options.Client().ApplyURI(connectionString))
+func New(config *Config) (*Store, error) {
+	client, err := mongo.NewClient(options.Client().ApplyURI(config.MongodbConnection))
 	if err != nil {
 		return nil, err
 	}
 
 	store := &Store{
 		client: client,
+		config: config,
 	}
 
 	return store, nil
@@ -31,13 +33,21 @@ func New(connectionString string) (*Store, error) {
 
 // AddURL ...
 func (s *Store) AddURL(longurl, shorturl string) error {
-	var data interface{}
+	type data struct {
+		longurl  string
+		shorturl string
+	}
 
 	collection := s.client.Database("linkshortener").Collection("links")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	result, err := collection.InsertOne(ctx, data)
+
+	result, err := collection.InsertOne(ctx, data{
+		longurl:  longurl,
+		shorturl: shorturl,
+	})
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 	fmt.Println(result)
@@ -45,8 +55,8 @@ func (s *Store) AddURL(longurl, shorturl string) error {
 	return nil
 }
 
-// GetURL ...
-func (s *Store) GetURL(shorturl string) (string, error) {
+// GetLongURL ...
+func (s *Store) GetLongURL(shorturl string) (string, error) {
 	collection := s.client.Database("linkshortener").Collection("links")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
