@@ -1,14 +1,13 @@
-package server_test
+package server
 
 import (
 	"testing"
 
-	"github.com/openmind13/link-shortener/app/server"
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_NewConfig(t *testing.T) {
-	expectedConfig := &server.Config{}
-	newConfig := server.NewConfig()
+	expectedConfig := &Config{}
+	newConfig := NewConfig()
 	assert.Equal(t, expectedConfig, newConfig)
 }

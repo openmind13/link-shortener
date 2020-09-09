@@ -1,15 +1,14 @@
-package utils_test
+package utils
 
 import (
 	"testing"
 
-	"github.com/openmind13/link-shortener/app/utils"
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_RandStringRunes(t *testing.T) {
 	count := 7
-	assert.Equal(t, count, len(utils.GenerateRandomShortURL(count)))
+	assert.Equal(t, count, len(GenerateRandomShortURL(count)))
 }
 
 func Test_ValidateURL(t *testing.T) {
@@ -48,9 +47,9 @@ func Test_ValidateURL(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			if tc.isValid {
-				assert.NoError(t, utils.ValidateURL(tc.url))
+				assert.NoError(t, ValidateURL(tc.url))
 			} else {
-				assert.Error(t, utils.ValidateURL(tc.url))
+				assert.Error(t, ValidateURL(tc.url))
 			}
 		})
 	}
