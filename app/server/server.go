@@ -34,10 +34,12 @@ func New(config *Config) (*Server, error) {
 	return s, nil
 }
 
+// adding handlers functions
 func (s *Server) configureRouter() {
 	// s.router.HandleFunc("/", s.infoHandler).Methods("GET", "POST")
 
 	s.router.HandleFunc("/create", s.handleCreate).Methods("POST")
+	s.router.HandleFunc("/createcustom", s.handleCreateCustom).Methods("POST")
 	s.router.HandleFunc("/{shorturl}", s.handleShortURL).Methods("GET")
 }
 
