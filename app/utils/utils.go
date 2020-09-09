@@ -3,12 +3,15 @@ package utils
 import (
 	"math/rand"
 	"time"
+
+	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
 )
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
-// RandStringRunes - return random string with "n" length
-func RandStringRunes(n int) string {
+// GenerateRandomShortURL - return random string with "n" length
+func GenerateRandomShortURL(n int) string {
 	rand.Seed(time.Now().UnixNano())
 
 	b := make([]rune, n)
@@ -17,4 +20,14 @@ func RandStringRunes(n int) string {
 	}
 
 	return string(b)
+}
+
+// ValidateURL - check correct url or not
+func ValidateURL(url string) error {
+	return validation.Validate(
+		url,
+		// rules
+		validation.Required,
+		is.URL,
+	)
 }
