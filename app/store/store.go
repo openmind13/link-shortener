@@ -2,18 +2,19 @@ package store
 
 import (
 	"context"
-	"fmt"
 	"time"
 
+	"github.com/openmind13/link-shortener/app/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 // Store struct
 type Store struct {
-	client *mongo.Client
 	config *Config
+	client *mongo.Client
 }
 
 // New - return new store
@@ -23,62 +24,53 @@ func New(config *Config) (*Store, error) {
 		return nil, err
 	}
 
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := client.Connect(ctx); err != nil {
+		return nil, err
+	}
+
+	if err := client.Ping(ctx, readpref.Primary()); err != nil {
+		return nil, err
+	}
+
 	store := &Store{
-		client: client,
 		config: config,
+		client: client,
 	}
 
 	return store, nil
 }
 
-// AddURL ...
+// AddURL - save short url into db
 func (s *Store) AddURL(longurl, shorturl string) error {
 	type data struct {
 		longurl  string
 		shorturl string
 	}
 
-	collection := s.client.Database("linkshortener").Collection("links")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	result, err := collection.InsertOne(ctx, data{
-		longurl:  longurl,
-		shorturl: shorturl,
-	})
-	if err != nil {
-		fmt.Println(err)
+	collection := s.client.Database("linkshortener").Collection("links")
+	if _, err := collection.InsertOne(ctx, bson.M{"longurl": longurl, "shorturl": shorturl}); err != nil {
 		return err
 	}
-	fmt.Println(result)
 
 	return nil
 }
 
-// GetLongURL ...
+// GetLongURL - return long url
 func (s *Store) GetLongURL(shorturl string) (string, error) {
 	collection := s.client.Database("linkshortener").Collection("links")
-
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	cursor, err := collection.Find(ctx, bson.M{})
-	if err != nil {
-		return "", err
-	}
-	defer cursor.Close(ctx)
-
-	var longurl string
-	cursor.All(ctx, longurl)
-
-	// for cursor.Next(ctx) {
-	// 	var data string
-	// 	cursor.Decode(data)
-	// 	datas = append(datas, data)
-	// }
-	if err := cursor.Err(); err != nil {
+	var d model.RequestAddCustom
+	if err := collection.FindOne(ctx, bson.M{"shorturl": shorturl}).Decode(&d); err != nil {
 		return "", err
 	}
 
-	return longurl, nil
+	return d.LongURL, nil
 }

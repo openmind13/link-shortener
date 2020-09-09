@@ -18,7 +18,7 @@ var (
 
 // GET /
 func (s *Server) infoHandler(w http.ResponseWriter, r *http.Request) {
-	// switch request type and display some information about server
+	// Show info about server
 	var infoString = "Welcome to the Go link shortner API"
 	fmt.Fprintf(w, infoString)
 }
@@ -41,11 +41,9 @@ func (s *Server) handleCreateRandomURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := model.ResponseAddRandom{
+	s.respondJSON(w, r, http.StatusCreated, model.ResponseAddRandom{
 		ShortURL: "http://" + s.config.BindAddr + "/" + shortURL,
-	}
-
-	s.respondJSON(w, r, http.StatusCreated, response)
+	})
 }
 
 // POST /createcustom
@@ -62,9 +60,9 @@ func (s *Server) handleCreateCustomURL(w http.ResponseWriter, r *http.Request) {
 		s.respondError(w, r, http.StatusUnprocessableEntity, err)
 	}
 
-	response := model.ResponseAddCustom{}
-
-	s.respondJSON(w, r, http.StatusCreated, response)
+	s.respondJSON(w, r, http.StatusCreated, model.ResponseAddCustom{
+		ShortURL: "http://" + s.config.BindAddr + "/" + request.ShortURL,
+	})
 }
 
 // GET /{shorturl}
