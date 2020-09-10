@@ -1,10 +1,6 @@
 FROM golang:latest
-RUN mkdir /app
-ADD . /app
-WORKDIR /app
-RUN go mod download
-RUN go build -o apiserver ./cmd/apiserver
-CMD ["/app/apiserver"]
-
-# COPY . .
-# ENTRYPOINT [ "apiserver" ]
+WORKDIR /home/app/
+COPY ./ /home/app/
+RUN go mod download && go build -o apiserver ./cmd/apiserver
+EXPOSE 8080
+CMD ./apiserver

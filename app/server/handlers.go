@@ -13,7 +13,8 @@ import (
 
 // errors
 var (
-	errSomethingWrongHere = errors.New("Something wrong here. URL not found")
+	errURLNotFound  = errors.New("Something wrong here. URL not found")
+	errIncorrectURL = errors.New("Incorrect URL")
 )
 
 // GET /
@@ -27,16 +28,21 @@ func (s *Server) infoHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) handleCreateRandomURL(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	req := new(model.RequestAddRandom)
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+	request := new(model.RequestAddRandom)
+	if err := json.NewDecoder(r.Body).Decode(request); err != nil {
 		s.respondError(w, r, http.StatusBadRequest, err)
+		return
+	}
+
+	if err := utils.ValidateURL(request.LongURL); err != nil {
+		s.respondError(w, r, http.StatusUnprocessableEntity, errIncorrectURL)
 		return
 	}
 
 	shortURL := utils.GenerateRandomShortURL(s.config.ShortURLLength)
 
 	// save into db and if all is Ok return to client
-	if err := s.store.AddURL(req.LongURL, shortURL); err != nil {
+	if err := s.store.AddURL(request.LongURL, shortURL); err != nil {
 		s.respondError(w, r, http.StatusUnprocessableEntity, err)
 		return
 	}
@@ -53,6 +59,11 @@ func (s *Server) handleCreateCustomURL(w http.ResponseWriter, r *http.Request) {
 	request := new(model.RequestAddCustom)
 	if err := json.NewDecoder(r.Body).Decode(request); err != nil {
 		s.respondError(w, r, http.StatusBadRequest, err)
+		return
+	}
+
+	if err := utils.ValidateURL(request.LongURL); err != nil {
+		s.respondError(w, r, http.StatusUnprocessableEntity, errIncorrectURL)
 		return
 	}
 
@@ -73,7 +84,7 @@ func (s *Server) handleShortURL(w http.ResponseWriter, r *http.Request) {
 	// get longurl from db
 	longURL, err := s.store.GetLongURL(shortURL)
 	if err != nil {
-		s.respondError(w, r, http.StatusUnprocessableEntity, errSomethingWrongHere)
+		s.respondError(w, r, http.StatusUnprocessableEntity, errURLNotFound)
 		return
 	}
 

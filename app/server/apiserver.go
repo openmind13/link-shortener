@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -17,12 +18,14 @@ type Server struct {
 // New - crete and init server
 func New(config *Config) (*Server, error) {
 	dbconfig := store.Config{
-		MongodbConnection: config.MongoDBConn,
+		MongodbConnection: config.MongodbConnection,
 		DBName:            config.DBName,
 		CollectionName:    config.CollectionName,
 	}
+
 	store, err := store.New(&dbconfig)
 	if err != nil {
+		fmt.Println("error in creating new store")
 		return nil, err
 	}
 
@@ -55,4 +58,9 @@ func (s *Server) Start() error {
 		return err
 	}
 	return nil
+}
+
+// ServeHTTP - method for testing
+func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	s.router.ServeHTTP(w, r)
 }

@@ -19,6 +19,8 @@ func init() {
 }
 
 func main() {
+	fmt.Println("start application")
+
 	config := server.NewConfig()
 	if _, err := toml.DecodeFile(configPath, config); err != nil {
 		log.Fatal(err)
@@ -26,6 +28,7 @@ func main() {
 
 	server, err := server.New(config)
 	if err != nil {
+		fmt.Printf("Server not created!\n")
 		log.Fatal(err)
 	}
 
