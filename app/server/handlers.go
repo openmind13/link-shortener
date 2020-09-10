@@ -28,11 +28,14 @@ func (s *Server) infoHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) handleCreateRandomURL(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	request := new(model.RequestAddRandom)
-	if err := json.NewDecoder(r.Body).Decode(request); err != nil {
+	//request := model.RequestAddRandom{}
+	request := &model.RequestAddRandom{}
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		s.respondError(w, r, http.StatusBadRequest, err)
 		return
 	}
+
+	fmt.Println(request)
 
 	if err := utils.ValidateURL(request.LongURL); err != nil {
 		s.respondError(w, r, http.StatusUnprocessableEntity, errIncorrectURL)

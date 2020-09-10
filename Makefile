@@ -20,7 +20,7 @@ start:
 
 .PHONY: start_wsl
 start_wsl:
-	sudo service mongodb start && go mod download && go build -v -o apiserver $(ENTRY_POINT) && echo "\n" && $(BIN_NAME)
+	sudo service mongodb start && go mod download && set CONFIG_PATH=config/server.toml && go build -v -o apiserver $(ENTRY_POINT) && echo "\n" && $(BIN_NAME)
 
 
 .PHONY: test
@@ -33,9 +33,9 @@ test_wsl:
 	sudo service mongodb start && go test -v -race -timeout 30s ./app/...
 
 
-# .PHONY: build docker image
-# image:
-# 	docker build -t linkshortener .
+.PHONY: build docker image
+image:
+	docker build -t linkshortener .
 
 
 .DEFAULT_GOAL := start_wsl

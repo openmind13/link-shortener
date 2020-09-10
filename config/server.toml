@@ -1,6 +1,6 @@
 bind_addr = "localhost:8080"
-mongodb_conn = "mongodb://localhost:27017"
 shorturl_length = 7
 
+mongodb_conn = "mongodb://localhost:27017"
 dbname = "linkshortener"
 collection_name = "links"
