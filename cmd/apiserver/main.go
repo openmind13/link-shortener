@@ -13,9 +13,9 @@ var (
 	configPath = "config/server.toml"
 )
 
-func init() {
-	os.Setenv("CONFIG_PATH", "config/server.toml")
-}
+// func init() {
+// 	os.Setenv("CONFIG_PATH", "config/server.toml")
+// }
 
 // func getConfigFromEnv() (*server.Config, error) {
 // 	shortURLLength, err := strconv.Atoi(os.Getenv("SHORT_URL_LENGTH"))
