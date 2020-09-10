@@ -3,7 +3,6 @@ package server
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -17,13 +16,6 @@ var (
 	errIncorrectURL = errors.New("Incorrect URL")
 )
 
-// GET /
-func (s *Server) infoHandler(w http.ResponseWriter, r *http.Request) {
-	// Show info about server
-	var infoString = "Welcome to the Go link shortner API"
-	fmt.Fprintf(w, infoString)
-}
-
 // POST /create
 func (s *Server) handleCreateRandomURL(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -35,10 +27,8 @@ func (s *Server) handleCreateRandomURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(request)
-
 	if err := utils.ValidateURL(request.LongURL); err != nil {
-		s.respondError(w, r, http.StatusUnprocessableEntity, errIncorrectURL)
+		s.respondError(w, r, http.StatusUnprocessableEntity, err)
 		return
 	}
 
@@ -83,6 +73,11 @@ func (s *Server) handleCreateCustomURL(w http.ResponseWriter, r *http.Request) {
 func (s *Server) handleShortURL(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	shortURL := vars["shorturl"]
+
+	if err := utils.ValidateURL(shortURL); err != nil {
+		s.respondError(w, r, http.StatusNotFound, err)
+		return
+	}
 
 	// get longurl from db
 	longURL, err := s.store.GetLongURL(shortURL)

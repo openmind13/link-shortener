@@ -17,6 +17,23 @@ func init() {
 	os.Setenv("CONFIG_PATH", "config/server.toml")
 }
 
+// func getConfigFromEnv() (*server.Config, error) {
+// 	shortURLLength, err := strconv.Atoi(os.Getenv("SHORT_URL_LENGTH"))
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	config := &server.Config{
+// 		BindAddr:          os.Getenv("BIND_ADDR"),
+// 		ShortURLLength:    shortURLLength,
+// 		MongodbConnection: os.Getenv("MONGODB_CONNECTION"),
+// 		DBName:            os.Getenv("DATABASE_NAME"),
+// 		CollectionName:    os.Getenv("MONGODB_CONNECTION"),
+// 	}
+
+// 	return config, nil
+// }
+
 func loadConfigFromTomlFile(configPath string) (*server.Config, error) {
 	config := &server.Config{}
 
@@ -37,6 +54,11 @@ func main() {
 		fmt.Println("Error in decoding toml file")
 		log.Fatal(err)
 	}
+
+	// config, err := getConfigFromEnv()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	server, err := server.New(config)
 	if err != nil {

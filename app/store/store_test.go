@@ -2,10 +2,6 @@ package store
 
 import "testing"
 
-func Test_New(t *testing.T) {
-
-}
-
 func Test_AddURL(t *testing.T) {
 
 }

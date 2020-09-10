@@ -11,6 +11,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
+// Config - db configuration
+type Config struct {
+	MongodbConnection string
+	DBName            string
+	CollectionName    string
+}
+
 // Store struct
 type Store struct {
 	config *Config
@@ -53,7 +60,7 @@ func (s *Store) AddURL(longurl, shorturl string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	collection := s.client.Database("linkshortener").Collection("links")
+	collection := s.client.Database(s.config.DBName).Collection(s.config.CollectionName)
 	if _, err := collection.InsertOne(ctx, bson.M{"longurl": longurl, "shorturl": shorturl}); err != nil {
 		return err
 	}
@@ -63,7 +70,7 @@ func (s *Store) AddURL(longurl, shorturl string) error {
 
 // GetLongURL - return long url
 func (s *Store) GetLongURL(shorturl string) (string, error) {
-	collection := s.client.Database("linkshortener").Collection("links")
+	collection := s.client.Database(s.config.DBName).Collection(s.config.CollectionName)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 

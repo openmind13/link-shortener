@@ -5,15 +5,15 @@ services:
     container_name: mongo
     ports: 
         - 27017:27017
-    volumes:
-        - ./mongodb_data:/var/lib/mongodb
-    # environment:
-    #     DATABASE_NAME: linkshortener
-    #     COLLECTION_NAME: links
-    #     MONGODB_CONNECTION: mongodb://localhost:27017
+    # volumes:
+    #     - ./mongodb_data:/var/lib/mongodb
+    environment:
+        DATABASE_NAME: linkshortener
+        COLLECTION_NAME: links
+        MONGODB_CONNECTION: mongodb://localhost:27017
     restart: always
-  app:
-    image: golang:latest
+  backend:
+    image: linkshortener
     container_name: linkshortener
     ports:
         - 8080:8080

@@ -23,12 +23,8 @@ var (
 	configPath = "../../config/server.toml"
 )
 
-func Test_infoHandler(t *testing.T) {
-
-}
-
 func Test_handleCreateRandomURL(t *testing.T) {
-	testConfig := NewConfig()
+	testConfig := &Config{}
 	if _, err := toml.DecodeFile(configPath, testConfig); err != nil {
 		t.Fatal(err)
 	}
@@ -60,9 +56,24 @@ func Test_handleCreateRandomURL(t *testing.T) {
 		{
 			name: "incorrect url",
 			payload: map[string]string{
-				"longurl": "$alkjdf$$$",
+				"longurl": "/$alkjdf$$$",
 			},
 			expectedCode: http.StatusUnprocessableEntity,
+		},
+		{
+			name: "incorrect data",
+			payload: map[string]string{
+				"longurl": "$--/\alkjdf$$$",
+			},
+			expectedCode: http.StatusUnprocessableEntity,
+		},
+		{
+			name: "additional payload",
+			payload: map[string]string{
+				"longurl":  "https://youtube.com",
+				"shorturl": "yt",
+			},
+			expectedCode: http.StatusBadRequest,
 		},
 	}
 
@@ -79,7 +90,7 @@ func Test_handleCreateRandomURL(t *testing.T) {
 }
 
 func Test_handleCreateCustomURL(t *testing.T) {
-	testConfig := NewConfig()
+	testConfig := &Config{}
 	if _, err := toml.DecodeFile(configPath, testConfig); err != nil {
 		t.Fatal(err)
 	}
@@ -103,7 +114,7 @@ func Test_handleCreateCustomURL(t *testing.T) {
 			expectedCode: http.StatusCreated,
 		},
 		{
-			name: "incorrect parameter",
+			name: "doesn't have shorturl parameter",
 			payload: map[string]string{
 				"longurl": "https://youtube.com",
 			},
@@ -124,7 +135,7 @@ func Test_handleCreateCustomURL(t *testing.T) {
 }
 
 func Test_handleShortURL(t *testing.T) {
-	testConfig := NewConfig()
+	testConfig := &Config{}
 	if _, err := toml.DecodeFile(configPath, testConfig); err != nil {
 		t.Fatal(err)
 	}
@@ -134,13 +145,16 @@ func Test_handleShortURL(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	rec := httptest.NewRecorder()
+	b := &bytes.Buffer{}
+	json.NewEncoder(b).Encode(map[string]string{
+		"longurl":  "https://youtube.com",
+		"shorturl": "yt",
+	})
+	req, _ := http.NewRequest(http.MethodPost, "/createcustom", b)
+	testServer.ServeHTTP(rec, req)
+
 	// store value in db
 
 	// test handleShortURL
-
-	rec := httptest.NewRecorder()
-	b := &bytes.Buffer{}
-	req, _ := http.NewRequest(http.MethodGet, "/{shorturl}", b)
-	testServer.ServeHTTP(rec, req)
-	assert.Equal(t, http.StatusPermanentRedirect, rec.Code)
 }

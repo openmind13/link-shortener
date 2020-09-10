@@ -8,6 +8,16 @@ import (
 	"github.com/openmind13/link-shortener/app/store"
 )
 
+// Config - server config
+type Config struct {
+	BindAddr       string `toml:"bind_addr"`
+	ShortURLLength int    `toml:"shorturl_length"`
+	// database parameters
+	MongodbConnection string `toml:"mongodb_conn"`
+	DBName            string `toml:"dbname"`
+	CollectionName    string `toml:"collection_name"`
+}
+
 // Server struct
 type Server struct {
 	router *mux.Router
@@ -36,16 +46,11 @@ func New(config *Config) (*Server, error) {
 	}
 
 	s.configureRouter()
-
-	// init database
-
 	return s, nil
 }
 
 // adding handlers functions
 func (s *Server) configureRouter() {
-	s.router.HandleFunc("/", s.infoHandler).Methods("GET", "POST")
-
 	s.router.HandleFunc("/{shorturl}", s.handleShortURL).Methods("GET")
 
 	s.router.HandleFunc("/create", s.handleCreateRandomURL).Methods("POST")

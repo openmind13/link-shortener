@@ -20,7 +20,7 @@ start:
 
 .PHONY: start_wsl
 start_wsl:
-	sudo service mongodb start && go mod download && set CONFIG_PATH=config/server.toml && go build -v -o apiserver $(ENTRY_POINT) && echo "\n" && $(BIN_NAME)
+	sudo service mongodb start && go mod download && go build -v -o apiserver $(ENTRY_POINT) && echo "\n" && $(BIN_NAME)
 
 
 .PHONY: test
