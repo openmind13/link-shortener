@@ -65,7 +65,7 @@ func (s *Server) handleCreateCustomURL(w http.ResponseWriter, r *http.Request) {
 	}
 
 	s.respondJSON(w, r, http.StatusCreated, model.ResponseAddCustom{
-		ShortURL: "http://" + s.config.BindAddr + "/" + request.ShortURL,
+		ShortURL: "http://localhost/" + request.ShortURL,
 	})
 }
 
