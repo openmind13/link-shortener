@@ -1,6 +1,7 @@
 ENTRY_POINT = ./cmd/apiserver
 BIN_NAME = ./apiserver
 OS = GOOS=linux
+ENV = CONFIG_PATH=config/server.toml
 
 
 .PHONY: install
@@ -15,12 +16,12 @@ install_wsl:
 
 .PHONY: start
 start:
-	sudo service mongod start && go mod download && go build -v -o apiserver $(ENTRY_POINT) && echo "\n" && $(BIN_NAME)
+	sudo service mongod start && go mod download && go build -v -o apiserver $(ENTRY_POINT) && echo "\n" && $(ENV) $(BIN_NAME)
 
 
 .PHONY: start_wsl
 start_wsl:
-	sudo service mongodb start && go mod download && go build -v -o apiserver $(ENTRY_POINT) && echo "\n" && $(BIN_NAME)
+	sudo service mongodb start && go mod download && go build -v -o apiserver $(ENTRY_POINT) && echo "\n" && $(ENV) $(BIN_NAME)
 
 
 .PHONY: test

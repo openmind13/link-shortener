@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -35,7 +34,6 @@ func New(config *Config) (*Server, error) {
 
 	store, err := store.New(&dbconfig)
 	if err != nil {
-		fmt.Println("error in creating new store")
 		return nil, err
 	}
 

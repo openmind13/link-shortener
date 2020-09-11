@@ -5,22 +5,17 @@ services:
     container_name: mongo
     ports: 
         - 27017:27017
-    # volumes:
-    #     - ./mongodb_data:/var/lib/mongodb
-    environment:
-        DATABASE_NAME: linkshortener
-        COLLECTION_NAME: links
-        MONGODB_CONNECTION: mongodb://localhost:27017
+    volumes:
+        - /var/lib/mongodb/:/var/lib/mongodb
     restart: always
+    
   backend:
     image: linkshortener
     container_name: linkshortener
     ports:
         - 8080:8080
     environment:
-        # BIND_ADDR: 8080
-        # SHORT_URL_LENGTH: 7
-        CONFIG_PATH: config/server.toml
+        CONFIG_PATH: config/server_container.toml
     restart: always
     depends_on: 
         - db

@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/openmind13/link-shortener/app/model"
@@ -28,6 +29,7 @@ type Store struct {
 func New(config *Config) (*Store, error) {
 	client, err := mongo.NewClient(options.Client().ApplyURI(config.MongodbConnection))
 	if err != nil {
+		fmt.Println("in connect new client")
 		return nil, err
 	}
 
@@ -35,10 +37,12 @@ func New(config *Config) (*Store, error) {
 	defer cancel()
 
 	if err := client.Connect(ctx); err != nil {
+		fmt.Println("error in connect")
 		return nil, err
 	}
 
 	if err := client.Ping(ctx, readpref.Primary()); err != nil {
+		fmt.Println("error in ping")
 		return nil, err
 	}
 

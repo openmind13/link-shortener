@@ -2,6 +2,14 @@
 
 Link shortener api server
 
+## Start app
+
+For starting application:
+```
+make image
+docker-compose up
+```
+
 ## Main api methods
 
 Get new short url
