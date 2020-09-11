@@ -2,19 +2,27 @@
 
 Link shortener api server
 
-## Start app
+## Запуск приложения
 
-For starting application:
+Для запуска выполните команды из корневой директории приложения:
 ```
-make image
-docker-compose up
+sudo docker build -t linkshortener .
+sudo docker-compose up
 ```
 
-## Main api methods
+## Примечание:
 
-Get new short url
+Приложение разрабатывалось в среде WSL Ubuntu Linux, поэтому команды в Makefile есть как для Desktop Ubuntu (20), так и для WSL Linux.
+Запуск приложения через docker-compose протестирован как на wsl, так и на обычной ubuntu, поэтому проблем быть не должно.
 
+## Технологии:
 
+ - Сервер написан на Golang
+ - Для хранения данных - MongoDB
+
+## Основные методы сервера
+
+Получить сокращенную ссылку (сгенерируется автоматически, длина настраивается в configs/server.toml):
 ```
 curl --header "Content-Type: application/json" \
   --request POST \
@@ -22,14 +30,12 @@ curl --header "Content-Type: application/json" \
   http://localhost:8080/create
 ```
 
-Response
-
+Ответ:
 ```
 {"shorturl":"http://localhost:8080/68Ad2x9"}
 ```
 
-Get new custom url
-
+Сделать свою кастомную ссылку:
 ```
 curl --header "Content-Type: application/json" \
   --request POST \
@@ -39,26 +45,22 @@ curl --header "Content-Type: application/json" \
   http://localhost:8080/createcustom
 ```
 
-Response
-
+Ответ:
 ```
 {"shorturl":"http://localhost:8080/trainee"}
 ```
 
-GET
-
+Перейти по сокращенной ссылке:
 ```
 curl --header "Content-Type: application/json" \
   --request GET \
   http://localhost:8080/{trainee}
 ```
+после этого сервер перенаправит вас на исходную ссылку или выдаст NotFound
 
-Redirect to longurl
+## Тестирование
 
-## Testing
-
-To test the entire application run:
-
+Для запуска тестов на все приложение запустить:
 ```
 make test
 ```
