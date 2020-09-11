@@ -12,7 +12,7 @@ sudo docker-compose up
 
 ## Примечание:
 
-Приложение разрабатывалось в среде WSL Ubuntu Linux, поэтому команды в Makefile есть как для Desktop Ubuntu (20), так и для WSL Linux.
+Приложение разрабатывалось в среде WSL Ubuntu Linux, поэтому команды в Makefile есть как для Desktop Ubuntu (20), так и для WSL Ubuntu Linux.
 Запуск приложения через docker-compose протестирован как на wsl, так и на обычной ubuntu, поэтому проблем быть не должно.
 
 ## Технологии:
