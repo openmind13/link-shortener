@@ -41,7 +41,7 @@ func (s *Server) handleCreateRandomURL(w http.ResponseWriter, r *http.Request) {
 	}
 
 	s.respondJSON(w, r, http.StatusCreated, model.ResponseAddRandom{
-		ShortURL: "http://" + s.config.BindAddr + "/" + shortURL,
+		ShortURL: "http://localhost:8080/" + shortURL,
 	})
 }
 
@@ -65,7 +65,7 @@ func (s *Server) handleCreateCustomURL(w http.ResponseWriter, r *http.Request) {
 	}
 
 	s.respondJSON(w, r, http.StatusCreated, model.ResponseAddCustom{
-		ShortURL: "http://localhost/" + request.ShortURL,
+		ShortURL: "http://localhost:8080/" + request.ShortURL,
 	})
 }
 

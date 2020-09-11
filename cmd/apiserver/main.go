@@ -28,7 +28,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("Server running on http://%v\n", config.BindAddr)
+	fmt.Printf("Server running on: %v\n", config.BindAddr)
 
 	if err := server.Start(); err != nil {
 		log.Fatal(err)

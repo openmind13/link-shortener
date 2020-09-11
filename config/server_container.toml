@@ -1,4 +1,4 @@
-bind_addr = "0.0.0.0:8080"
+bind_addr = ":8080"
 shorturl_length = 7
 
 mongodb_conn = "mongodb://db:27017"
