@@ -62,3 +62,4 @@ curl --header "Content-Type: application/json" \
 ```
 make test
 ```
+- Не все методы работают корректно, поэтому тесты падают.
