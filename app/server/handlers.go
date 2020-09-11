@@ -74,10 +74,10 @@ func (s *Server) handleShortURL(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	shortURL := vars["shorturl"]
 
-	if err := utils.ValidateURL(shortURL); err != nil {
-		s.respondError(w, r, http.StatusNotFound, err)
-		return
-	}
+	// if err := utils.ValidateURL(shortURL); err != nil {
+	// 	s.respondError(w, r, http.StatusNotFound, err)
+	// 	return
+	// }
 
 	// get longurl from db
 	longURL, err := s.store.GetLongURL(shortURL)

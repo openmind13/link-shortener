@@ -39,4 +39,9 @@ image:
 	docker build -t linkshortener .
 
 
+.PHONY: compile
+compile:
+	go build -v -o apiserver $(ENTRY_POINT)
+
+
 .DEFAULT_GOAL := start_wsl
