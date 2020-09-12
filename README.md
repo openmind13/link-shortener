@@ -4,7 +4,6 @@
 
 Для запуска выполните команды из корневой директории приложения:
 ```
-sudo docker build -t linkshortener .
 sudo docker-compose up
 ```
 После этого приложение запущено на localhost:8080

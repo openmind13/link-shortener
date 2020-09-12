@@ -1,3 +1,4 @@
+# build image 
 # FROM golang:latest
 # WORKDIR /home/app/
 # COPY ./ /home/app/
@@ -7,6 +8,7 @@
 # CMD ./apiserver
 
 
+# build image from executable file
 FROM golang:latest
 WORKDIR /home/app/
 COPY ./ /home/app/
