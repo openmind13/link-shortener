@@ -4,45 +4,34 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/openmind13/link-shortener/app/config"
 	"github.com/openmind13/link-shortener/app/store"
+	"github.com/openmind13/link-shortener/app/store/mongodb"
 )
-
-// Config - server config
-type Config struct {
-	BindAddr       string `toml:"bind_addr"`
-	ShortURLLength int    `toml:"shorturl_length"`
-	// database parameters
-	MongodbConnection string `toml:"mongodb_conn"`
-	DBName            string `toml:"dbname"`
-	CollectionName    string `toml:"collection_name"`
-}
 
 // Server struct
 type Server struct {
 	router *mux.Router
-	store  *store.Store
-	config *Config
+	store  store.Store
+	config *config.Config
 }
 
 // New - crete and init server
-func New(config *Config) (*Server, error) {
-	dbconfig := store.Config{
+func New(config *config.Config) (*Server, error) {
+	dbconfig := mongodb.Config{
 		MongodbConnection: config.MongodbConnection,
 		DBName:            config.DBName,
 		CollectionName:    config.CollectionName,
 	}
-
-	store, err := store.New(&dbconfig)
+	store, err := mongodb.NewMongodbStore(&dbconfig)
 	if err != nil {
 		return nil, err
 	}
-
 	s := &Server{
 		router: mux.NewRouter(),
 		store:  store,
 		config: config,
 	}
-
 	s.configureRouter()
 	return s, nil
 }
@@ -50,9 +39,12 @@ func New(config *Config) (*Server, error) {
 // adding handlers functions
 func (s *Server) configureRouter() {
 	s.router.HandleFunc("/{shorturl}", s.handleShortURL).Methods("GET")
-
 	s.router.HandleFunc("/create", s.handleCreateRandomURL).Methods("POST")
 	s.router.HandleFunc("/createcustom", s.handleCreateCustomURL).Methods("POST")
+}
+
+func (s *Server) registerMiddleware() {
+	s.router.Use(s.panicMiddleware)
 }
 
 // Start - start server

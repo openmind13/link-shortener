@@ -7,20 +7,24 @@ services:
         - 27017:27017
     volumes:
         # - /var/lib/mongodb/:/var/lib/mongodb
-        - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+        - ./mongoinit/mongoinit.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     logging: 
         driver: "none"
     restart: always
     
   backend:
-    # image: linkshortener
+    image: linkshortener
     build:
         context: .
     container_name: linkshortener
     ports:
         - 8080:8080
     environment:
-        CONFIG_PATH: config/server_container.toml
+        BIND_ADDR: :8080
+        SHORTURL_LENGTH: 7
+        MONGODB_CONN: mongodb://db:27017
+        DBNAME: linkshortener
+        COLLECTION_NAME: links
     restart: always
     depends_on: 
         - db

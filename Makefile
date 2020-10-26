@@ -18,4 +18,7 @@ image:
 compile:
 	go build -v -o apiserver $(ENTRY_POINT)
 
-.DEFAULT_GOAL := start
+run:
+	sudo service mongodb start && go mod download && cd ./cmd/apiserver; ./rundev.sh
+
+.DEFAULT_GOAL := run

@@ -6,12 +6,19 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_RandStringRunes(t *testing.T) {
+func TestRandStringRunes(t *testing.T) {
 	count := 7
 	assert.Equal(t, count, len(GenerateRandomShortURL(count)))
 }
 
-func Test_ValidateURL(t *testing.T) {
+// func TestBase62EncodeURL(t *testing.T) {
+// 	count := 7
+// 	hashStr := Base62EncodeURL(count)
+// 	assert.Equal(t, count, len(hashStr))
+// 	fmt.Println(hashStr)
+// }
+
+func TestValidateURL(t *testing.T) {
 	testCases := []struct {
 		name    string
 		url     string

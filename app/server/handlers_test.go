@@ -8,32 +8,26 @@ import (
 	"testing"
 
 	"github.com/BurntSushi/toml"
+	"github.com/openmind13/link-shortener/app/config"
 	"github.com/stretchr/testify/assert"
 )
 
 var (
-	testConfig = &Config{
+	testConfig = &config.Config{
 		BindAddr:          "localhost:8000",
 		ShortURLLength:    7,
 		MongodbConnection: "mongodb://localhost:27017",
 		DBName:            "linkshortener_test",
 		CollectionName:    "links_test",
 	}
-
 	configPath = "../../config/server.toml"
 )
 
 func Test_handleCreateRandomURL(t *testing.T) {
-	testConfig := &Config{}
-	if _, err := toml.DecodeFile(configPath, testConfig); err != nil {
-		t.Fatal(err)
-	}
-
 	testServer, err := New(testConfig)
 	if err != nil {
 		t.Fatal(err)
 	}
-
 	testCases := []struct {
 		name         string
 		payload      interface{}
@@ -76,7 +70,6 @@ func Test_handleCreateRandomURL(t *testing.T) {
 			expectedCode: http.StatusBadRequest,
 		},
 	}
-
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			rec := httptest.NewRecorder()
@@ -90,16 +83,10 @@ func Test_handleCreateRandomURL(t *testing.T) {
 }
 
 func Test_handleCreateCustomURL(t *testing.T) {
-	testConfig := &Config{}
-	if _, err := toml.DecodeFile(configPath, testConfig); err != nil {
-		t.Fatal(err)
-	}
-
 	testServer, err := New(testConfig)
 	if err != nil {
 		t.Fatal(err)
 	}
-
 	testCases := []struct {
 		name         string
 		payload      interface{}
@@ -121,7 +108,6 @@ func Test_handleCreateCustomURL(t *testing.T) {
 			expectedCode: http.StatusBadRequest,
 		},
 	}
-
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			rec := httptest.NewRecorder()
@@ -135,16 +121,14 @@ func Test_handleCreateCustomURL(t *testing.T) {
 }
 
 func Test_handleShortURL(t *testing.T) {
-	testConfig := &Config{}
+	testConfig := &config.Config{}
 	if _, err := toml.DecodeFile(configPath, testConfig); err != nil {
 		t.Fatal(err)
 	}
-
 	testServer, err := New(testConfig)
 	if err != nil {
 		t.Fatal(err)
 	}
-
 	rec := httptest.NewRecorder()
 	b := &bytes.Buffer{}
 	json.NewEncoder(b).Encode(map[string]string{
@@ -153,8 +137,6 @@ func Test_handleShortURL(t *testing.T) {
 	})
 	req, _ := http.NewRequest(http.MethodPost, "/createcustom", b)
 	testServer.ServeHTTP(rec, req)
-
 	// store value in db
-
 	// test handleShortURL
 }
